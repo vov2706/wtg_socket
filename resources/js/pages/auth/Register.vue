@@ -5,7 +5,7 @@ import { ref } from 'vue';
 import type { RegisterPayload } from '@/interfaces/auth';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { useAuthStore } from '@/store/auth';
-import { hasError } from '@/utils/formHelpers';
+import { clearErrors, hasError } from '@/utils/formHelpers';
 
 interface Errors {
   name: string[];
@@ -49,6 +49,7 @@ const onSubmit = () => {
 
   const auth = useAuthStore();
   loading.value = true;
+  clearErrors(errors.value);
 
   auth
     .register(formData.value)
@@ -57,7 +58,10 @@ const onSubmit = () => {
 
       for (const field in data) {
         const key = field as keyof typeof errors.value;
-        errors.value[key] = data[key][0];
+
+        data[key].map((e: string) => {
+          errors.value[key].push(e);
+        });
       }
     })
     .finally(() => {

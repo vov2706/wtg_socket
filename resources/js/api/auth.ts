@@ -2,13 +2,14 @@ import type {
   LoginPayload,
   AuthResponse,
   RegisterPayload,
+  AuthUser,
 } from '@/interfaces/auth';
 import fetchApi from '@/packages/fetchApi';
 
 export const getProfile = async () => {
   const { data } = await fetchApi.get('/profile');
 
-  return data;
+  return data.data as AuthUser;
 }
 
 export const login = async (payload: LoginPayload): Promise<AuthResponse> => {

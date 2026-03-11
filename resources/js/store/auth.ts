@@ -1,10 +1,14 @@
 import { defineStore } from 'pinia';
-import { getProfile, login, register } from '@/api/auth';
-import type { LoginPayload, RegisterPayload, User } from '@/interfaces/auth';
+import { getProfile, login, logout, register } from '@/api/auth';
+import type {
+  AuthUser,
+  LoginPayload,
+  RegisterPayload,
+} from '@/interfaces/auth';
 import { router } from '@/routes';
 
 interface AuthState {
-  user: User | null;
+  user: AuthUser | null;
   token: string | null;
 }
 
@@ -12,14 +16,14 @@ const ACCESS_TOKEN = 'access_token';
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
-    user: null as User | null,
+    user: null as AuthUser | null,
     token: localStorage.getItem(ACCESS_TOKEN),
   }),
 
   getters: {
-    isLoggedIn:(state)=> {
+    isLoggedIn: (state) => {
       return !!state.token;
-    }
+    },
   },
 
   actions: {
@@ -28,11 +32,13 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem(ACCESS_TOKEN, token);
     },
 
-    setUser(user: User | null) {
+    setUser(user: AuthUser | null) {
       this.user = user;
     },
 
-    logout() {
+    async logout() {
+      await logout()
+
       this.token = '';
       this.user = null;
       localStorage.removeItem(ACCESS_TOKEN);

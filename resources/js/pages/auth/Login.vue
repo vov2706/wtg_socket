@@ -5,14 +5,18 @@ import { ref } from 'vue';
 import type { LoginPayload } from '@/interfaces/auth';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { useAuthStore } from '@/store/auth';
-import { hasError } from '@/utils/formHelpers';
+import { clearErrors, hasError } from '@/utils/formHelpers';
 
-interface LoginErrors {
-  email?: string;
-  password?: string;
+interface Errors {
+  email: string[];
+  password: string[];
 }
 
-const errors = ref<LoginErrors>({});
+const errors = ref<Errors>({
+  email: [],
+  password: [],
+});
+
 const formData = ref<LoginPayload>({
   email: '',
   password: '',
@@ -20,25 +24,34 @@ const formData = ref<LoginPayload>({
 const loading = ref(false);
 
 const onSubmit = () => {
-  errors.value = {};
-
   if (!formData.value.email) {
-    errors.value.email = 'Email is required';
+    errors.value.email.push('Email is required');
   }
 
   if (!formData.value.password) {
-    errors.value.password = 'Password is required';
+    errors.value.password.push('Password is required');
   }
 
-  if (errors.value.email || errors.value.password) return;
+  if (!formData.value.email || !formData.value.password) {
+    return;
+  }
 
   const auth = useAuthStore();
   loading.value = true;
+  clearErrors(errors.value);
 
   auth
     .login(formData.value)
     .catch((err) => {
-      console.log(err.response?.data);
+      const data = err.response?.data?.errors ?? {};
+
+      for (const field in data) {
+        const key = field as keyof typeof errors.value;
+
+        data[key].map((e: string) => {
+          errors.value[key].push(e);
+        });
+      }
     })
     .finally(() => {
       loading.value = false;
@@ -98,11 +111,12 @@ const onSubmit = () => {
             </div>
 
             <p
-              v-if="hasError(errors, 'email')"
+              v-for="err in errors.email"
+              :key="err"
               id="email-error"
               class="mt-2 text-sm text-red-600 dark:text-red-400"
             >
-              {{ errors.email }}
+              {{ err }}
             </p>
           </div>
 
@@ -142,11 +156,12 @@ const onSubmit = () => {
             </div>
 
             <p
-              v-if="hasError(errors, 'password')"
+              v-for="err in errors.password"
+              :key="err"
               id="password-error"
               class="mt-2 text-sm text-red-600 dark:text-red-400"
             >
-              {{ errors.password }}
+              {{ err }}
             </p>
           </div>
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Messages\MessageController;
 use App\Http\Controllers\Users\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,12 +14,16 @@ Route::middleware('guest')->controller(AuthController::class)->group(function ()
 // auth
 Route::middleware('auth:sanctum')->group(function () {
     // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout')
-        ->middleware('guest');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Auth user
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+
+    // Users
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    // Messages
+    Route::apiResource('messages', MessageController::class)->only(['index', 'store']);
 });
 
 Route::fallback(function () {

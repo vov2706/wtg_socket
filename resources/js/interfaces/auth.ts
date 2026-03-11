@@ -1,4 +1,4 @@
-export interface User {
+export interface AuthUser {
     id: number;
     name: string;
     email: string;
@@ -17,6 +17,6 @@ export interface RegisterPayload {
 }
 
 export interface AuthResponse {
-  user: User
-  token: string
+  user: AuthUser;
+  token: string;
 }
