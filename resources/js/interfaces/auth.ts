@@ -1,7 +1,10 @@
+import type { Message } from '@/interfaces/messages';
+
 export interface AuthUser {
-    id: number;
-    name: string;
-    email: string;
+  id: number;
+  name: string;
+  email: string;
+  notReadMessages?: Message[] | null;
 }
 
 export interface LoginPayload {

@@ -16,6 +16,7 @@ class SendMessage implements ShouldBroadcast
 
     public function __construct(
         private readonly int $receiverId,
+        private readonly int $messageId,
         private readonly string $senderName,
         private readonly string $text,
     ) {
@@ -29,6 +30,7 @@ class SendMessage implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
+            'id' => $this->messageId,
             'sender' => $this->senderName,
             'text' => $this->text,
         ];

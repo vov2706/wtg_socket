@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Messages
     Route::apiResource('messages', MessageController::class)->only(['index', 'store']);
+    Route::post('/messages/{message}/read', [MessageController::class, 'read'])->name('messages.read');
 });
 
 Route::fallback(function () {

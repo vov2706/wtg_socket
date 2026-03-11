@@ -6,6 +6,9 @@ import type {
   RegisterPayload,
 } from '@/interfaces/auth';
 import { router } from '@/routes';
+import { useToast } from 'vue-toastification';
+import MessageToast from '@/components/toasts/MessageToast.vue';
+import { showMessageToast } from '@/utils/toasts';
 
 interface AuthState {
   user: AuthUser | null;
@@ -68,7 +71,11 @@ export const useAuthStore = defineStore('auth', {
     async bootstrap() {
       try {
         if (!this.token) return;
-        await this.fetchProfile();
+        const user = await this.fetchProfile();
+
+        user.notReadMessages?.map((message) => {
+          showMessageToast(message);
+        });
       } catch (e: any) {
         console.error(e);
         this.logout();

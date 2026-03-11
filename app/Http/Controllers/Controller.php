@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 abstract class Controller
 {
-    public function responseSuccess(string $message = 'ok', array $options = [])
+    public function responseSuccess(?string $message = null, array $options = [])
     {
         return response([
             ...$options,

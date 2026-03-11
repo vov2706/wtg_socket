@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+    public function notReadMessages(): HasMany
+    {
+        return $this->receivedMessages()->whereNull('read_at')->latest('id');
+    }
+
     #[Scope]
     public function search(Builder $query, ?string $search = null): void
     {

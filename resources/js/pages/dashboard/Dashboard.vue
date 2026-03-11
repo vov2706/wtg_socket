@@ -137,7 +137,7 @@ onMounted(() => {
                         @click="openNotifyModal(user)"
                         class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
                       >
-                        Notify
+                        Send message
                       </button>
                     </td>
                   </tr>
@@ -198,7 +198,7 @@ onMounted(() => {
                 as="h3"
                 class="text-lg font-semibold text-gray-900 dark:text-white"
               >
-                Send notification
+                Send message
               </DialogTitle>
 
               <div class="mt-2">

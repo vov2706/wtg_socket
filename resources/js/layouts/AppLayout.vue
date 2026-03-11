@@ -2,10 +2,12 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { onMounted, ref } from 'vue';
-import { useToast } from 'vue-toastification';
+import { useRouter } from 'vue-router';
+import { MessageType } from '@/api/messages';
 import type { AuthUser } from '@/interfaces/auth';
 import { useAuthStore } from '@/store/auth';
-import { useRouter } from 'vue-router';
+import { showMessageToast } from '@/utils/toasts';
+import { Message } from '@/interfaces/messages';
 
 const user = ref<AuthUser | null>(null);
 
@@ -19,7 +21,7 @@ const navigation = [
   },
   {
     name: 'Messages',
-    href: '/messages',
+    href: `/messages?type=${MessageType.SENT}`,
     current: router.currentRoute.value.name === 'messages',
   },
 ];
@@ -30,16 +32,19 @@ const handleLogout = async () => {
   await auth.logout();
 };
 
-const toast = useToast();
-
 onMounted(async () => {
   await auth.bootstrap();
   user.value = auth.user!;
 
   window.Echo.private(`users.${user.value.id}`).listen('.send.message', (e) => {
-    toast.success(`User ${e.sender} sent you new message!`, {
-      timeout: false,
-    });
+    const mockMessage = {
+      id: e.id,
+      text: e.text,
+      sender: {
+        name: e.sender,
+      },
+    };
+    showMessageToast(mockMessage as Message);
   });
 });
 </script>

@@ -26,3 +26,10 @@ export const sendMessage = async (payload: SendMessagePayload) => {
 
   return data;
 };
+
+
+export const markAsRead = async (id: number) => {
+  const { data } = await fetchApi.post(`/messages/${id}/read`);
+
+  return data;
+};

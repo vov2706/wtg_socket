@@ -6,6 +6,7 @@ use App\Enums\MessageType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messages\StoreRequest;
 use App\Http\Resources\Messages\MessageResource;
+use App\Models\Message;
 use App\Services\Messages\MessageService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -40,5 +41,16 @@ class MessageController extends Controller
         $this->messageService->notify($request->user(), $request->validated());
 
         return $this->responseSuccess('Message sent successfully!');
+    }
+
+    public function read(Message $message)
+    {
+        if ($message->receiver_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $this->messageService->readMessage($message);
+
+        return $this->responseSuccess();
     }
 }

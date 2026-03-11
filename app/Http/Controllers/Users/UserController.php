@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function profile()
     {
-        return UserResource::make(auth()->user());
+        return UserResource::make(auth()->user()->load('notReadMessages.sender'));
     }
 
     public function index(Request $request, UserService $userService)
